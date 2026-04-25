@@ -24,6 +24,18 @@ const App: React.FC = () => {
     scrollToBottom();
   }, [messages, isTyping]);
 
+  useEffect(() => {
+    // Console Greeting
+    console.log(`%c
+  ____         _             _      ___ 
+ |  _ \\   __ _(_) __   __   / \\    |_ _|
+ | | | | / _\` | | \\ \\ / /  / _ \\    | | 
+ | |_| || (_| | |  \\ V /  / ___ \\   | | 
+ |____/  \\__,_|_|   \\_/  /_/   \\_\\ |___|
+
+ %cDeveloped by codingmaster24`, "color: #10b981; font-weight: bold;", "color: #6b7280; font-size: 12px; font-weight: bold;");
+  }, []);
+
   return (
     <div className="app-container">
       <Sidebar />
