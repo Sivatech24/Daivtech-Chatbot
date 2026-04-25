@@ -33,21 +33,21 @@ const App: React.FC = () => {
  | |_| || (_| | |  \\ V /  / ___ \\   | | 
  |____/  \\__,_|_|   \\_/  /_/   \\_\\ |___|
 
- %cDeveloped by codingmaster24`, "color: #10b981; font-weight: bold;", "color: #6b7280; font-size: 12px; font-weight: bold;");
+ %cDaviAi`, "color: #10b981; font-weight: bold;", "color: #6b7280; font-size: 12px; font-weight: bold;");
   }, []);
 
   return (
     <div className="app-container">
       <Sidebar />
-      
-      <motion.div 
+
+      <motion.div
         className="main-wrapper"
         animate={{ paddingLeft: isSidebarOpen ? '260px' : '0px' }}
         transition={{ type: 'spring', damping: 20, stiffness: 100 }}
       >
         <AnimatePresence>
           {error && (
-            <motion.div 
+            <motion.div
               className="global-error-banner"
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -62,9 +62,9 @@ const App: React.FC = () => {
             </motion.div>
           )}
         </AnimatePresence>
-        
+
         <Navbar />
-        
+
         <main className="main-content">
           {!activeChatId || messages.length === 0 ? (
             <Home />
@@ -72,8 +72,8 @@ const App: React.FC = () => {
             <div className="messages-list">
               <AnimatePresence initial={false}>
                 {messages.map((message) => (
-                  <motion.div 
-                    key={message.id} 
+                  <motion.div
+                    key={message.id}
                     className={`message-row ${message.role}`}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -94,13 +94,13 @@ const App: React.FC = () => {
                       </div>
                       {message.role === 'user' && (
                         <div className="message-actions">
-                          <button 
+                          <button
                             className="action-btn"
                             onClick={() => setModal('edit-message', { id: message.id, content: message.content })}
                           >
                             <Edit3 size={16} />
                           </button>
-                          <button 
+                          <button
                             className="action-btn"
                             onClick={() => setModal('delete-message', { id: message.id })}
                           >
@@ -114,7 +114,7 @@ const App: React.FC = () => {
               </AnimatePresence>
 
               {isTyping && (
-                <motion.div 
+                <motion.div
                   className="message-row assistant"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
