@@ -202,11 +202,13 @@ const App: React.FC = () => {
         }
 
         .message-row.user {
-          background-color: transparent;
+          background-color: white;
+          border-bottom: 1px solid #f3f4f6;
         }
 
         .message-row.assistant {
           background-color: #f9fafb;
+          border-bottom: 1px solid #f3f4f6;
         }
 
         .message-container {
@@ -228,12 +230,12 @@ const App: React.FC = () => {
         }
 
         .user .message-avatar {
-          background-color: #e5e7eb;
-          color: #4b5563;
+          background-color: #6b7280;
+          color: white;
         }
 
         .assistant .message-avatar {
-          background-color: var(--primary-color);
+          background-color: #10b981;
           color: white;
         }
 

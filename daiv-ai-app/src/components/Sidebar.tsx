@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Plus, MessageSquare, Edit3, Trash2, X, MoreHorizontal, Sparkles, Settings, LogOut, User, HelpCircle } from 'lucide-react';
+import { Plus, MessageSquare, Edit3, Trash2, X, MoreHorizontal, Sparkles, Settings, LogOut, User, HelpCircle, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useChatStore } from '../store/useChatStore';
 
@@ -64,56 +64,65 @@ const Sidebar: React.FC = () => {
           <div className="chats-container">
             <div className="section-title">TODAY</div>
             <div className="chat-list">
-              {chats.map((chat) => (
+              {chats.map((chat, index) => (
                 <div 
-                  key={chat.id} 
+                  key={`${chat.id}-${index}`} 
                   className={`chat-item-box ${activeChatId === chat.id ? 'active' : ''}`}
                   onClick={() => setActiveChat(chat.id)}
                 >
-                  <div className="chat-item-header">
+                  <div className="chat-item-main">
                     <MessageSquare size={16} className="chat-icon" />
                     {editingId === chat.id ? (
-                      <input
-                        className="rename-input"
-                        value={editValue}
-                        onChange={(e) => setEditValue(e.target.value)}
-                        onBlur={() => handleRename(chat.id)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') handleRename(chat.id);
-                          if (e.key === 'Escape') setEditingId(null);
-                        }}
-                        autoFocus
-                        onClick={(e) => e.stopPropagation()}
-                      />
+                      <div className="inline-edit-wrapper">
+                        <input
+                          className="rename-input"
+                          value={editValue}
+                          onChange={(e) => setEditValue(e.target.value)}
+                          onBlur={() => handleRename(chat.id)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') handleRename(chat.id);
+                            if (e.key === 'Escape') setEditingId(null);
+                          }}
+                          autoFocus
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                        <div className="inline-actions">
+                          <button className="inline-action-btn check" onClick={(e) => { e.stopPropagation(); handleRename(chat.id); }}>
+                            <Check size={14} />
+                          </button>
+                          <button className="inline-action-btn cancel" onClick={(e) => { e.stopPropagation(); setEditingId(null); }}>
+                            <X size={14} />
+                          </button>
+                        </div>
+                      </div>
                     ) : (
-                      <span className="chat-title">{chat.title}</span>
+                      <>
+                        <span className="chat-title">{chat.title}</span>
+                        <div className="chat-actions">
+                          <button 
+                            className="action-btn-small"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setEditingId(chat.id);
+                              setEditValue(chat.title);
+                            }}
+                          >
+                            <Edit3 size={12} />
+                          </button>
+                          <button 
+                            className="action-btn-small"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setModal('delete-chat', { id: chat.id, title: chat.title });
+                            }}
+                          >
+                            <Trash2 size={12} />
+                          </button>
+                        </div>
+                      </>
                     )}
                   </div>
-                  
-                  <div className="chat-item-footer">
-                    <span className="chat-date">Today</span>
-                    <div className="chat-actions">
-                      <button 
-                        className="action-btn-small"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setEditingId(chat.id);
-                          setEditValue(chat.title);
-                        }}
-                      >
-                        <Edit3 size={12} />
-                      </button>
-                      <button 
-                        className="action-btn-small"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setModal('delete-chat', { id: chat.id, title: chat.title });
-                        }}
-                      >
-                        <Trash2 size={12} />
-                      </button>
-                    </div>
-                  </div>
+                  {editingId !== chat.id && <span className="chat-date">Today</span>}
                 </div>
               ))}
             </div>
@@ -126,8 +135,8 @@ const Sidebar: React.FC = () => {
             >
               <div className="user-avatar">U</div>
               <div className="user-info">
-                <span className="user-name">User</span>
-                <span className="user-email">user@daivai.com</span>
+                <div className="user-name">User</div>
+                <div className="user-email">user@daivai.com</div>
               </div>
               <MoreHorizontal size={18} className="more-icon" />
             </button>
@@ -242,9 +251,9 @@ const Sidebar: React.FC = () => {
 
         .section-title {
           font-size: 11px;
-          font-weight: 700;
-          color: var(--text-secondary);
-          margin: 20px 8px 8px;
+          font-weight: 600;
+          color: #6b7280;
+          margin: 20px 12px 10px;
           letter-spacing: 0.05em;
         }
 
@@ -257,13 +266,16 @@ const Sidebar: React.FC = () => {
         .chat-item-box {
           display: flex;
           flex-direction: column;
-          padding: 2px 8px;
+          padding: 6px 12px;
           border-radius: 8px;
           cursor: pointer;
-          gap: 0px;
+          gap: 2px;
           border: 1px solid transparent;
-          transition: all 0.2s;
+          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
           background-color: transparent;
+          height: 46px;
+          justify-content: center;
+          overflow: hidden;
         }
 
         .chat-item-box:hover {
@@ -272,15 +284,16 @@ const Sidebar: React.FC = () => {
         }
 
         .chat-item-box.active {
-          background-color: white;
+          background-color: #f0fdf4;
           border-color: #10b981;
-          box-shadow: 0 2px 4px rgba(16, 185, 129, 0.05);
+          box-shadow: none;
         }
 
-        .chat-item-header {
+        .chat-item-main {
           display: flex;
           align-items: center;
           gap: 10px;
+          width: 100%;
         }
 
         .chat-icon {
@@ -303,16 +316,12 @@ const Sidebar: React.FC = () => {
           line-height: 1.4;
         }
 
-        .chat-item-footer {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding-left: 26px;
-        }
-
         .chat-date {
-          font-size: 10px;
+          font-size: 11px;
           color: #9ca3af;
+          padding-left: 26px;
+          line-height: 1;
+          font-weight: 400;
         }
 
         .action-btn-small {
@@ -332,24 +341,55 @@ const Sidebar: React.FC = () => {
           color: var(--text-primary);
         }
 
+        .inline-edit-wrapper {
+          flex: 1;
+          display: flex;
+          align-items: center;
+          gap: 2px;
+          background-color: white;
+          border: 1px solid var(--primary-color);
+          border-radius: 6px;
+          padding: 0 2px 0 6px;
+          height: 26px;
+          margin-left: -2px;
+          overflow: hidden;
+        }
+
         .rename-input {
           flex: 1;
           background: transparent;
           border: none;
           color: inherit;
-          font-size: 14px;
+          font-size: 13px;
           padding: 0;
+          outline: none;
+          min-width: 0;
+          height: 100%;
         }
 
-        .chat-actions {
+        .inline-actions {
           display: flex;
           gap: 2px;
-          opacity: 0;
-          transition: opacity 0.2s;
         }
 
-        .chat-item:hover .chat-actions {
-          opacity: 1;
+        .inline-action-btn {
+          padding: 2px;
+          border-radius: 4px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .inline-action-btn.check {
+          color: var(--primary-color);
+        }
+
+        .inline-action-btn.cancel {
+          color: #ef4444;
+        }
+
+        .inline-action-btn:hover {
+          background-color: rgba(0, 0, 0, 0.05);
         }
 
         .action-btn {
@@ -377,6 +417,8 @@ const Sidebar: React.FC = () => {
           padding: 6px 8px;
           border-radius: 12px;
           transition: background-color 0.2s;
+          text-align: left;
+          justify-content: flex-start;
         }
 
         .user-profile:hover, .user-profile.active {
@@ -402,7 +444,7 @@ const Sidebar: React.FC = () => {
           flex-direction: column;
           align-items: flex-start;
           justify-content: center;
-          gap: 0px;
+          gap: 2px;
           min-width: 0;
           padding: 0;
           margin: 0;

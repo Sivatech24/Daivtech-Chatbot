@@ -74,7 +74,7 @@ export const useChatStore = create<ChatState>()(
       createNewChat: () => {
         try {
           const newChat: Chat = {
-            id: Math.random().toString(36).substring(7),
+            id: Date.now().toString(36) + Math.random().toString(36).substring(2, 7),
             title: 'New Chat',
             messages: [],
             createdAt: Date.now(),
@@ -133,7 +133,7 @@ export const useChatStore = create<ChatState>()(
           
           const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
           const newMessage: Message = {
-            id: Math.random().toString(36).substring(7),
+            id: Date.now().toString(36) + Math.random().toString(36).substring(2, 7),
             role,
             content,
             timestamp,
@@ -142,7 +142,7 @@ export const useChatStore = create<ChatState>()(
           set((state) => {
             if (!state.activeChatId) {
               const newChat: Chat = {
-                id: Math.random().toString(36).substring(7),
+                id: Date.now().toString(36) + Math.random().toString(36).substring(2, 7),
                 title: content.substring(0, 30) + (content.length > 30 ? '...' : ''),
                 messages: [newMessage],
                 createdAt: Date.now(),
