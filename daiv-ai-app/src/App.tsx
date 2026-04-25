@@ -193,7 +193,7 @@ const App: React.FC = () => {
 
         .message-row {
           width: 100%;
-          padding: 24px 20px;
+          padding: 8px 20px;
           transition: background-color 0.2s;
         }
 
@@ -213,7 +213,7 @@ const App: React.FC = () => {
           max-width: 840px;
           margin: 0 auto;
           display: flex;
-          gap: 16px;
+          gap: 12px;
           position: relative;
         }
 

@@ -257,10 +257,10 @@ const Sidebar: React.FC = () => {
         .chat-item-box {
           display: flex;
           flex-direction: column;
-          padding: 8px 10px;
-          border-radius: 10px;
+          padding: 2px 8px;
+          border-radius: 8px;
           cursor: pointer;
-          gap: 4px;
+          gap: 0px;
           border: 1px solid transparent;
           transition: all 0.2s;
           background-color: transparent;
@@ -300,6 +300,7 @@ const Sidebar: React.FC = () => {
           overflow: hidden;
           text-overflow: ellipsis;
           color: var(--text-primary);
+          line-height: 1.4;
         }
 
         .chat-item-footer {
@@ -310,7 +311,7 @@ const Sidebar: React.FC = () => {
         }
 
         .chat-date {
-          font-size: 11px;
+          font-size: 10px;
           color: #9ca3af;
         }
 
@@ -372,8 +373,8 @@ const Sidebar: React.FC = () => {
           width: 100%;
           display: flex;
           align-items: center;
-          gap: 12px;
-          padding: 8px;
+          gap: 8px;
+          padding: 6px 8px;
           border-radius: 12px;
           transition: background-color 0.2s;
         }
@@ -400,14 +401,21 @@ const Sidebar: React.FC = () => {
           display: flex;
           flex-direction: column;
           align-items: flex-start;
+          justify-content: center;
+          gap: 0px;
           min-width: 0;
+          padding: 0;
+          margin: 0;
         }
 
         .user-name {
           font-size: 14px;
           font-weight: 600;
           color: var(--text-primary);
-          line-height: 1.2;
+          line-height: 1;
+          margin: 0;
+          padding: 0;
+          display: block;
         }
 
         .user-email {
@@ -417,6 +425,11 @@ const Sidebar: React.FC = () => {
           overflow: hidden;
           text-overflow: ellipsis;
           width: 100%;
+          line-height: 1;
+          margin: 0;
+          padding: 0;
+          display: block;
+          text-align: left;
         }
 
         .more-icon {
