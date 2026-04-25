@@ -69,10 +69,11 @@ Here are some things I can help with:
         </div>
       </div>
       <div className="input-footer">
-        <p className="disclaimer">
-          Press Enter to send, Shift+Enter for new line | {input.length} / 4000
-        </p>
-        <p className="disclaimer mt-1">
+        <div className="prompt-info">
+          <span className="disclaimer">Press Enter to send, Shift+Enter for new line</span>
+          <span className="disclaimer">{input.length} / 4000</span>
+        </div>
+        <p className="disclaimer footer-note">
           AI can make mistakes. Consider checking important information.
         </p>
       </div>
@@ -158,17 +159,27 @@ Here are some things I can help with:
 
         .input-footer {
           margin-top: 12px;
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
+
+        .prompt-info {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0 4px;
+        }
+
+        .footer-note {
           text-align: center;
+          margin-top: 4px;
         }
 
         .disclaimer {
           font-size: 11px;
           color: var(--text-secondary);
           letter-spacing: 0.02em;
-        }
-
-        .mt-1 {
-          margin-top: 4px;
         }
       `}</style>
     </div>

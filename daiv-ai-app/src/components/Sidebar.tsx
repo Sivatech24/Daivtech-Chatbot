@@ -59,54 +59,60 @@ const Sidebar: React.FC = () => {
             <span>New Chat</span>
           </button>
 
+          <div className="sidebar-divider" />
+
           <div className="chats-container">
             <div className="section-title">TODAY</div>
             <div className="chat-list">
               {chats.map((chat) => (
                 <div 
                   key={chat.id} 
-                  className={`chat-item ${activeChatId === chat.id ? 'active' : ''}`}
+                  className={`chat-item-box ${activeChatId === chat.id ? 'active' : ''}`}
                   onClick={() => setActiveChat(chat.id)}
                 >
-                  <MessageSquare size={18} className="chat-icon" />
+                  <div className="chat-item-header">
+                    <MessageSquare size={16} className="chat-icon" />
+                    {editingId === chat.id ? (
+                      <input
+                        className="rename-input"
+                        value={editValue}
+                        onChange={(e) => setEditValue(e.target.value)}
+                        onBlur={() => handleRename(chat.id)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') handleRename(chat.id);
+                          if (e.key === 'Escape') setEditingId(null);
+                        }}
+                        autoFocus
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                    ) : (
+                      <span className="chat-title">{chat.title}</span>
+                    )}
+                  </div>
                   
-                  {editingId === chat.id ? (
-                    <input
-                      className="rename-input"
-                      value={editValue}
-                      onChange={(e) => setEditValue(e.target.value)}
-                      onBlur={() => handleRename(chat.id)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') handleRename(chat.id);
-                        if (e.key === 'Escape') setEditingId(null);
-                      }}
-                      autoFocus
-                      onClick={(e) => e.stopPropagation()}
-                    />
-                  ) : (
-                    <span className="chat-title">{chat.title}</span>
-                  )}
-
-                  <div className="chat-actions">
-                    <button 
-                      className="action-btn"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setEditingId(chat.id);
-                        setEditValue(chat.title);
-                      }}
-                    >
-                      <Edit3 size={14} />
-                    </button>
-                    <button 
-                      className="action-btn"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setModal('delete-chat', { id: chat.id, title: chat.title });
-                      }}
-                    >
-                      <Trash2 size={14} />
-                    </button>
+                  <div className="chat-item-footer">
+                    <span className="chat-date">Today</span>
+                    <div className="chat-actions">
+                      <button 
+                        className="action-btn-small"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingId(chat.id);
+                          setEditValue(chat.title);
+                        }}
+                      >
+                        <Edit3 size={12} />
+                      </button>
+                      <button 
+                        className="action-btn-small"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setModal('delete-chat', { id: chat.id, title: chat.title });
+                        }}
+                      >
+                        <Trash2 size={12} />
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -138,14 +144,17 @@ const Sidebar: React.FC = () => {
                     <User size={18} />
                     <span>My Account</span>
                   </button>
+                  <div className="popup-divider" />
                   <button className="popup-item highlight-green">
                     <Sparkles size={18} />
                     <span>Upgrade Plan</span>
                   </button>
+                  <div className="popup-divider" />
                   <button className="popup-item">
                     <Settings size={18} />
                     <span>Settings</span>
                   </button>
+                  <div className="popup-divider" />
                   <button className="popup-item">
                     <HelpCircle size={18} />
                     <span>Help & Support</span>
@@ -166,7 +175,7 @@ const Sidebar: React.FC = () => {
         .sidebar {
           width: 260px;
           height: 100vh;
-          background-color: var(--sidebar-bg);
+          background-color: #f9fafb;
           border-right: 1px solid var(--border-color);
           display: flex;
           flex-direction: column;
@@ -245,24 +254,33 @@ const Sidebar: React.FC = () => {
           gap: 4px;
         }
 
-        .chat-item {
+        .chat-item-box {
+          display: flex;
+          flex-direction: column;
+          padding: 12px;
+          border-radius: 12px;
+          cursor: pointer;
+          gap: 8px;
+          border: 1px solid transparent;
+          transition: all 0.2s;
+          background-color: transparent;
+        }
+
+        .chat-item-box:hover {
+          background-color: var(--hover-bg);
+          border-color: var(--border-color);
+        }
+
+        .chat-item-box.active {
+          background-color: white;
+          border-color: #10b981;
+          box-shadow: 0 2px 4px rgba(16, 185, 129, 0.05);
+        }
+
+        .chat-item-header {
           display: flex;
           align-items: center;
-          padding: 10px 12px;
-          border-radius: 10px;
-          cursor: pointer;
-          gap: 12px;
-          position: relative;
-          transition: all 0.2s;
-        }
-
-        .chat-item:hover {
-          background-color: var(--hover-bg);
-        }
-
-        .chat-item.active {
-          background-color: #ecfdf5;
-          color: var(--primary-color);
+          gap: 10px;
         }
 
         .chat-icon {
@@ -270,16 +288,47 @@ const Sidebar: React.FC = () => {
           color: var(--text-secondary);
         }
 
-        .chat-item.active .chat-icon {
+        .chat-item-box.active .chat-icon {
           color: var(--primary-color);
         }
 
         .chat-title {
           flex: 1;
           font-size: 14px;
+          font-weight: 500;
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
+          color: var(--text-primary);
+        }
+
+        .chat-item-footer {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding-left: 26px;
+        }
+
+        .chat-date {
+          font-size: 12px;
+          color: var(--text-secondary);
+        }
+
+        .action-btn-small {
+          padding: 4px;
+          border-radius: 4px;
+          color: var(--text-secondary);
+          opacity: 0;
+          transition: opacity 0.2s;
+        }
+
+        .chat-item-box:hover .action-btn-small {
+          opacity: 1;
+        }
+
+        .action-btn-small:hover {
+          background-color: rgba(0, 0, 0, 0.05);
+          color: var(--text-primary);
         }
 
         .rename-input {
@@ -411,10 +460,16 @@ const Sidebar: React.FC = () => {
           margin-top: 4px;
         }
 
-        .popup-divider {
+        .sidebar-divider {
           height: 1px;
           background-color: var(--border-color);
-          margin: 4px 0;
+          margin: 0 16px;
+        }
+
+        .popup-divider {
+          height: 1px;
+          background-color: #f3f4f6;
+          margin: 0;
         }
       `}</style>
     </AnimatePresence>
