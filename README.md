@@ -69,7 +69,7 @@ npm run deploy
 ---
 
 ## 👨‍💻 Developer
-Developed with ❤️ by **codingmaster24**.
+Developed with by **codingmaster24**.
 
 ---
 
