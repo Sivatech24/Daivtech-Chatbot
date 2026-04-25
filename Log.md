@@ -32,3 +32,13 @@ found 0 vulnerabilities
   ➜  Local:   http://localhost:5173/
   ➜  Network: use --host to expose
   ➜  press h + enter to show help
+
+npm install zustand react-router-dom lucide-react
+
+
+added 6 packages, and audited 160 packages in 7s
+
+43 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
