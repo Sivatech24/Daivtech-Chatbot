@@ -42,3 +42,5 @@ added 6 packages, and audited 160 packages in 7s
   run `npm fund` for details
 
 found 0 vulnerabilities
+
+npm run build
