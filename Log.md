@@ -44,3 +44,7 @@ added 6 packages, and audited 160 packages in 7s
 found 0 vulnerabilities
 
 npm run build
+
+npm run build
+
+npm run dev

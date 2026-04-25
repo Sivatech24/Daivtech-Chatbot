@@ -4,7 +4,7 @@ import ActionCard from '../components/ActionCard';
 import { useChatStore } from '../store/useChatStore';
 
 const Home: React.FC = () => {
-  const setInput = useChatStore((state) => state.setInput);
+  const addMessage = useChatStore((state) => state.addMessage);
 
   const actions = [
     { title: 'Code Help', description: 'Debug and write better code' },
@@ -16,13 +16,15 @@ const Home: React.FC = () => {
   return (
     <div className="home-container fade-in">
       <div className="welcome-section">
-        <div className="main-logo">
-          <Zap size={48} fill="white" color="white" />
+        <div className="main-logo-glow">
+          <div className="main-logo">
+            <Zap size={48} fill="white" color="white" />
+          </div>
         </div>
-        <h1 className="brand-name">
-          Daiv<span className="brand-accent">AI</span>
+        <h1 className="brand-name-large">
+          Daiv<span className="brand-accent-black">AI</span>
         </h1>
-        <p className="subtext">Ask me anything. I'm here to help.</p>
+        <p className="subtext-large">Ask me anything. I'm here to help.</p>
       </div>
 
       <div className="actions-grid">
@@ -31,7 +33,7 @@ const Home: React.FC = () => {
             key={index}
             title={action.title}
             description={action.description}
-            onClick={() => setInput(action.title)}
+            onClick={() => addMessage(action.title, 'user')}
           />
         ))}
       </div>
@@ -43,7 +45,7 @@ const Home: React.FC = () => {
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          padding: 20px;
+          padding: 40px 20px;
           max-width: 800px;
           margin: 0 auto;
           width: 100%;
@@ -53,36 +55,54 @@ const Home: React.FC = () => {
           display: flex;
           flex-direction: column;
           align-items: center;
-          margin-bottom: 40px;
+          margin-bottom: 48px;
+        }
+
+        .main-logo-glow {
+          position: relative;
+          margin-bottom: 24px;
+        }
+
+        .main-logo-glow::after {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 120px;
+          height: 120px;
+          background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
+          z-index: -1;
         }
 
         .main-logo {
           width: 80px;
           height: 80px;
           background-color: var(--primary-color);
-          border-radius: 20px;
+          border-radius: 24px;
           display: flex;
           align-items: center;
           justify-content: center;
-          margin-bottom: 20px;
-          box-shadow: 0 0 40px var(--primary-glow);
+          box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.2);
         }
 
-        .brand-name {
-          font-size: 32px;
+        .brand-name-large {
+          font-size: 36px;
           font-weight: 700;
-          color: var(--text-primary);
-          margin-bottom: 8px;
+          color: var(--primary-color);
+          margin-bottom: 12px;
         }
 
-        .brand-accent {
+        .brand-accent-black {
           color: var(--text-primary);
         }
 
-        .subtext {
+        .subtext-large {
           font-size: 16px;
           color: var(--text-secondary);
           text-align: center;
+          max-width: 400px;
+          line-height: 1.5;
         }
 
         .actions-grid {
@@ -97,7 +117,7 @@ const Home: React.FC = () => {
             grid-template-columns: 1fr;
           }
           
-          .brand-name {
+          .brand-name-large {
             font-size: 28px;
           }
         }

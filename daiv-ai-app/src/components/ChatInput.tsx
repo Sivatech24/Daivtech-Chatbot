@@ -1,22 +1,20 @@
 import React, { useRef, useEffect } from 'react';
-import { Paperclip, Mic, SendHorizonal } from 'lucide-react';
+import { Paperclip, Mic, Send } from 'lucide-react';
 import { useChatStore } from '../store/useChatStore';
 
 const ChatInput: React.FC = () => {
-  const { input, setInput, addMessage } = useChatStore();
+  const { input, setInput, addMessage, currentModel } = useChatStore();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleSend = () => {
     if (input.trim()) {
       addMessage(input, 'user');
       setInput('');
-    }
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
+      
+      // Simulate bot response
+      setTimeout(() => {
+        addMessage(`Hello! I'm ${currentModel}, your intelligent assistant. How can I help you today?`, 'assistant');
+      }, 1000);
     }
   };
 
@@ -29,23 +27,28 @@ const ChatInput: React.FC = () => {
 
   return (
     <div className="chat-input-container">
-      <div className="input-wrapper">
-        <button className="input-action-btn">
+      <div className="chat-input-wrapper glass">
+        <button className="input-icon-btn">
           <Paperclip size={20} />
         </button>
         
         <textarea
           ref={textareaRef}
           className="chat-textarea"
-          placeholder="Message Neural Nexus..."
+          placeholder={`Message ${currentModel}...`}
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKeyDown}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              handleSend();
+            }
+          }}
           rows={1}
         />
 
         <div className="input-right-actions">
-          <button className="input-action-btn">
+          <button className="input-icon-btn">
             <Mic size={20} />
           </button>
           <button 
@@ -53,55 +56,58 @@ const ChatInput: React.FC = () => {
             onClick={handleSend}
             disabled={!input.trim()}
           >
-            <SendHorizonal size={20} />
+            <Send size={18} />
           </button>
         </div>
       </div>
-      
-      <p className="disclaimer">
-        AI can make mistakes. Consider checking important information.
-      </p>
+      <div className="input-footer">
+        <p className="disclaimer">
+          Press Enter to send, Shift+Enter for new line | {input.length} / 4000
+        </p>
+        <p className="disclaimer mt-1">
+          AI can make mistakes. Consider checking important information.
+        </p>
+      </div>
 
       <style>{`
         .chat-input-container {
-          padding: 16px;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 8px;
-          background: transparent;
+          padding: 20px;
+          max-width: 840px;
+          margin: 0 auto;
+          width: 100%;
+          position: sticky;
+          bottom: 0;
+          background: linear-gradient(to top, var(--bg-color) 80%, transparent);
+          z-index: 10;
         }
 
-        .input-wrapper {
+        .chat-input-wrapper {
           display: flex;
           align-items: flex-end;
           gap: 12px;
           padding: 12px 16px;
-          background-color: var(--input-bg);
-          border-radius: 24px;
-          width: 100%;
-          max-width: 800px;
-          transition: all 0.2s ease;
-          border: 1px solid transparent;
+          border: 1px solid var(--border-color);
+          border-radius: 20px;
+          background-color: var(--sidebar-bg);
+          transition: border-color 0.2s, box-shadow 0.2s;
         }
 
-        .input-wrapper:focus-within {
-          background-color: var(--bg-color);
-          border-color: var(--border-color);
-          box-shadow: var(--shadow-md);
+        .chat-input-wrapper:focus-within {
+          border-color: var(--primary-color);
+          box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.1);
         }
 
         .chat-textarea {
           flex: 1;
-          background: transparent;
           border: none;
-          outline: none;
-          resize: none;
-          padding: 8px 0;
-          font-size: 15px;
+          background: transparent;
           color: var(--text-primary);
-          max-height: 200px;
+          font-size: 15px;
           line-height: 1.5;
+          padding: 8px 0;
+          resize: none;
+          outline: none;
+          max-height: 200px;
         }
 
         .input-right-actions {
@@ -111,39 +117,45 @@ const ChatInput: React.FC = () => {
           padding-bottom: 4px;
         }
 
-        .input-action-btn {
+        .input-icon-btn {
           color: var(--text-secondary);
-          padding: 6px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
+          padding: 8px;
+          border-radius: 10px;
+          transition: background-color 0.2s, color 0.2s;
         }
 
-        .input-action-btn:hover {
+        .input-icon-btn:hover {
           background-color: var(--hover-bg);
           color: var(--text-primary);
         }
 
         .send-btn {
-          background-color: #e5e7eb;
-          color: #9ca3af;
+          background-color: var(--border-color);
+          color: var(--text-secondary);
           padding: 8px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
+          border-radius: 10px;
+          transition: all 0.2s;
         }
 
         .send-btn.active {
-          background-color: var(--text-primary);
+          background-color: var(--primary-color);
           color: white;
+          box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);
+        }
+
+        .input-footer {
+          margin-top: 12px;
+          text-align: center;
         }
 
         .disclaimer {
           font-size: 11px;
           color: var(--text-secondary);
-          text-align: center;
+          letter-spacing: 0.02em;
+        }
+
+        .mt-1 {
+          margin-top: 4px;
         }
       `}</style>
     </div>
