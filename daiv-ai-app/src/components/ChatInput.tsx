@@ -3,18 +3,25 @@ import { Paperclip, Mic, Send } from 'lucide-react';
 import { useChatStore } from '../store/useChatStore';
 
 const ChatInput: React.FC = () => {
-  const { input, setInput, addMessage, currentModel } = useChatStore();
+  const { input, setInput, addMessage, currentModel, setTyping, isTyping } = useChatStore();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleSend = () => {
-    if (input.trim()) {
+    if (input.trim() && !isTyping) {
       addMessage(input, 'user');
       setInput('');
+      setTyping(true);
       
       // Simulate bot response
       setTimeout(() => {
-        addMessage(`Hello! I'm ${currentModel}, your intelligent assistant. How can I help you today?`, 'assistant');
-      }, 1000);
+        addMessage(`Hello! I'm ${currentModel}, your intelligent assistant. I've received your message and I'm ready to help you with your React project or any other technical challenges you're facing.
+
+Here are some things I can help with:
+- **Code Debugging**: Send me your snippets.
+- **Architecture**: Let's plan your app structure.
+- **Best Practices**: I can review your patterns.`, 'assistant');
+        setTyping(false);
+      }, 1500);
     }
   };
 
@@ -45,6 +52,7 @@ const ChatInput: React.FC = () => {
             }
           }}
           rows={1}
+          disabled={isTyping}
         />
 
         <div className="input-right-actions">
@@ -52,9 +60,9 @@ const ChatInput: React.FC = () => {
             <Mic size={20} />
           </button>
           <button 
-            className={`send-btn ${input.trim() ? 'active' : ''}`}
+            className={`send-btn ${input.trim() && !isTyping ? 'active' : ''}`}
             onClick={handleSend}
-            disabled={!input.trim()}
+            disabled={!input.trim() || isTyping}
           >
             <Send size={18} />
           </button>
@@ -108,6 +116,11 @@ const ChatInput: React.FC = () => {
           resize: none;
           outline: none;
           max-height: 200px;
+        }
+
+        .chat-textarea:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
         }
 
         .input-right-actions {

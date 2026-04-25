@@ -22,7 +22,7 @@ const Home: React.FC = () => {
           </div>
         </div>
         <h1 className="brand-name-large">
-          Daiv<span className="brand-accent-black">AI</span>
+          <span className="brand-accent-green">Daiv</span><span className="brand-accent-black">AI</span>
         </h1>
         <p className="subtext-large">Ask me anything. I'm here to help.</p>
       </div>
@@ -87,14 +87,18 @@ const Home: React.FC = () => {
         }
 
         .brand-name-large {
-          font-size: 36px;
-          font-weight: 700;
-          color: var(--primary-color);
+          font-size: 42px;
+          font-weight: 800;
           margin-bottom: 12px;
+          letter-spacing: -0.02em;
+        }
+
+        .brand-accent-green {
+          color: var(--primary-color);
         }
 
         .brand-accent-black {
-          color: var(--text-primary);
+          color: #000000;
         }
 
         .subtext-large {

@@ -48,3 +48,5 @@ npm run build
 npm run build
 
 npm run dev
+
+npm install framer-motion react-markdown

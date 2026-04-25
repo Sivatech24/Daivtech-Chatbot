@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 export interface Message {
   id: string;
@@ -22,6 +23,8 @@ interface ChatState {
   input: string;
   isSidebarOpen: boolean;
   currentModel: string;
+  error: string | null;
+  isTyping: boolean;
   modal: {
     type: ModalType;
     data?: any;
@@ -33,6 +36,8 @@ interface ChatState {
   toggleSidebar: () => void;
   setCurrentModel: (model: string) => void;
   setModal: (type: ModalType, data?: any) => void;
+  setError: (error: string | null) => void;
+  setTyping: (typing: boolean) => void;
   
   // Chat Actions
   createNewChat: () => void;
@@ -46,112 +51,174 @@ interface ChatState {
   deleteMessage: (chatId: string, messageId: string) => void;
 }
 
-export const useChatStore = create<ChatState>((set) => ({
-  chats: [],
-  activeChatId: null,
-  input: '',
-  isSidebarOpen: true,
-  currentModel: 'Neural Nexus',
-  modal: { type: null },
+export const useChatStore = create<ChatState>()(
+  persist(
+    (set) => ({
+      chats: [],
+      activeChatId: null,
+      input: '',
+      isSidebarOpen: true,
+      currentModel: 'Neural Nexus',
+      error: null,
+      isTyping: false,
+      modal: { type: null },
 
-  setInput: (input) => set({ input }),
-  setSidebarOpen: (isSidebarOpen) => set({ isSidebarOpen }),
-  toggleSidebar: () => set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
-  setCurrentModel: (currentModel) => set({ currentModel }),
-  setModal: (type, data) => set({ modal: { type, data } }),
+      setInput: (input) => set({ input }),
+      setSidebarOpen: (isSidebarOpen) => set({ isSidebarOpen }),
+      toggleSidebar: () => set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
+      setCurrentModel: (currentModel) => set({ currentModel }),
+      setModal: (type, data) => set({ modal: { type, data } }),
+      setError: (error) => set({ error }),
+      setTyping: (isTyping) => set({ isTyping }),
 
-  createNewChat: () => {
-    const newChat: Chat = {
-      id: Math.random().toString(36).substring(7),
-      title: 'New Chat',
-      messages: [],
-      createdAt: Date.now(),
-    };
-    set((state) => ({
-      chats: [newChat, ...state.chats],
-      activeChatId: newChat.id,
-      input: '', // Clear input when creating new chat
-    }));
-  },
+      createNewChat: () => {
+        try {
+          const newChat: Chat = {
+            id: Math.random().toString(36).substring(7),
+            title: 'New Chat',
+            messages: [],
+            createdAt: Date.now(),
+          };
+          set((state) => ({
+            chats: [newChat, ...state.chats],
+            activeChatId: newChat.id,
+            input: '',
+            error: null,
+          }));
+        } catch (e) {
+          set({ error: 'Failed to create a new chat.' });
+        }
+      },
 
-  setActiveChat: (id) => set({ activeChatId: id }),
+      setActiveChat: (id) => {
+        try {
+          set({ activeChatId: id, error: null });
+        } catch (e) {
+          set({ error: 'Failed to switch chats.' });
+        }
+      },
 
-  renameChat: (id, newTitle) =>
-    set((state) => ({
-      chats: state.chats.map((chat) =>
-        chat.id === id ? { ...chat, title: newTitle } : chat
-      ),
-    })),
+      renameChat: (id, newTitle) => {
+        try {
+          if (!newTitle.trim()) throw new Error('Title cannot be empty');
+          set((state) => ({
+            chats: state.chats.map((chat) =>
+              chat.id === id ? { ...chat, title: newTitle } : chat
+            ),
+            error: null,
+          }));
+        } catch (e: any) {
+          set({ error: e.message || 'Failed to rename chat.' });
+        }
+      },
 
-  deleteChat: (id) =>
-    set((state) => {
-      const newChats = state.chats.filter((chat) => chat.id !== id);
-      return {
-        chats: newChats,
-        activeChatId: state.activeChatId === id ? (newChats[0]?.id || null) : state.activeChatId,
-      };
-    }),
+      deleteChat: (id) => {
+        try {
+          set((state) => {
+            const newChats = state.chats.filter((chat) => chat.id !== id);
+            return {
+              chats: newChats,
+              activeChatId: state.activeChatId === id ? (newChats[0]?.id || null) : state.activeChatId,
+              error: null,
+            };
+          });
+        } catch (e) {
+          set({ error: 'Failed to delete chat.' });
+        }
+      },
 
-  addMessage: (content, role) =>
-    set((state) => {
-      const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
-      const newMessage: Message = {
-        id: Math.random().toString(36).substring(7),
-        role,
-        content,
-        timestamp,
-      };
+      addMessage: (content, role) => {
+        try {
+          if (!content.trim()) return;
+          
+          const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+          const newMessage: Message = {
+            id: Math.random().toString(36).substring(7),
+            role,
+            content,
+            timestamp,
+          };
 
-      if (!state.activeChatId) {
-        // Create a new chat if none exists
-        const newChat: Chat = {
-          id: Math.random().toString(36).substring(7),
-          title: content.substring(0, 30) + (content.length > 30 ? '...' : ''),
-          messages: [newMessage],
-          createdAt: Date.now(),
-        };
-        return {
-          chats: [newChat, ...state.chats],
-          activeChatId: newChat.id,
-        };
-      }
+          set((state) => {
+            if (!state.activeChatId) {
+              const newChat: Chat = {
+                id: Math.random().toString(36).substring(7),
+                title: content.substring(0, 30) + (content.length > 30 ? '...' : ''),
+                messages: [newMessage],
+                createdAt: Date.now(),
+              };
+              return {
+                chats: [newChat, ...state.chats],
+                activeChatId: newChat.id,
+                error: null,
+              };
+            }
 
-      return {
-        chats: state.chats.map((chat) =>
-          chat.id === state.activeChatId
-            ? {
-                ...chat,
-                messages: [...chat.messages, newMessage],
-                title: chat.messages.length === 0 ? content.substring(0, 30) + (content.length > 30 ? '...' : '') : chat.title,
-              }
-            : chat
-        ),
-      };
-    }),
-
-  updateMessage: (chatId, messageId, newContent) =>
-    set((state) => ({
-      chats: state.chats.map((chat) =>
-        chat.id === chatId
-          ? {
-              ...chat,
-              messages: chat.messages.map((msg) =>
-                msg.id === messageId ? { ...msg, content: newContent } : msg
+            return {
+              chats: state.chats.map((chat) =>
+                chat.id === state.activeChatId
+                  ? {
+                      ...chat,
+                      messages: [...chat.messages, newMessage],
+                      title: chat.messages.length === 0 ? content.substring(0, 30) + (content.length > 30 ? '...' : '') : chat.title,
+                    }
+                  : chat
               ),
-            }
-          : chat
-      ),
-    })),
+              error: null,
+            };
+          });
+        } catch (e) {
+          set({ error: 'Failed to add message.' });
+        }
+      },
 
-  deleteMessage: (chatId, messageId) =>
-    set((state) => ({
-      chats: state.chats.map((chat) =>
-        chat.id === chatId
-          ? {
-              ...chat,
-              messages: chat.messages.filter((msg) => msg.id !== messageId),
-            }
-          : chat
-      ),
-    })),
-}));
+      updateMessage: (chatId, messageId, newContent) => {
+        try {
+          if (!newContent.trim()) throw new Error('Message cannot be empty');
+          set((state) => ({
+            chats: state.chats.map((chat) =>
+              chat.id === chatId
+                ? {
+                    ...chat,
+                    messages: chat.messages.map((msg) =>
+                      msg.id === messageId ? { ...msg, content: newContent } : msg
+                    ),
+                  }
+                : chat
+            ),
+            error: null,
+          }));
+        } catch (e: any) {
+          set({ error: e.message || 'Failed to update message.' });
+        }
+      },
+
+      deleteMessage: (chatId, messageId) => {
+        try {
+          set((state) => ({
+            chats: state.chats.map((chat) =>
+              chat.id === chatId
+                ? {
+                    ...chat,
+                    messages: chat.messages.filter((msg) => msg.id !== messageId),
+                  }
+                : chat
+            ),
+            error: null,
+          }));
+        } catch (e) {
+          set({ error: 'Failed to delete message.' });
+        }
+      },
+    }),
+    {
+      name: 'daiv-ai-storage',
+      partialize: (state) => ({ 
+        chats: state.chats, 
+        activeChatId: state.activeChatId,
+        currentModel: state.currentModel,
+        isSidebarOpen: state.isSidebarOpen 
+      }),
+    }
+  )
+);

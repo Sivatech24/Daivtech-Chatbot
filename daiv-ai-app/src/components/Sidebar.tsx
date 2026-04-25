@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Plus, MessageSquare, Edit3, Trash2, X, MoreHorizontal, User, Sparkles, Settings, HelpCircle, LogOut, Check } from 'lucide-react';
+import { Plus, MessageSquare, Edit3, Trash2, X, MoreHorizontal, Sparkles, Settings, LogOut } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useChatStore } from '../store/useChatStore';
 
 const Sidebar: React.FC = () => {
@@ -35,144 +36,136 @@ const Sidebar: React.FC = () => {
   };
 
   return (
-    <>
-      <div className={`sidebar ${isSidebarOpen ? 'open' : 'closed'}`}>
-        <div className="sidebar-header">
-          <div className="logo-group">
-            <h2 className="brand-name">Daiv<span className="brand-accent">AI</span></h2>
+    <AnimatePresence>
+      {isSidebarOpen && (
+        <motion.aside 
+          className="sidebar"
+          initial={{ x: -260 }}
+          animate={{ x: 0 }}
+          exit={{ x: -260 }}
+          transition={{ type: 'spring', damping: 20, stiffness: 100 }}
+        >
+          <div className="sidebar-header">
+            <div className="logo-group">
+              <h2 className="brand-name"><span className="brand-accent-green">Daiv</span><span className="brand-accent-black">AI</span></h2>
+            </div>
+            <button className="icon-btn close-btn" onClick={toggleSidebar}>
+              <X size={20} />
+            </button>
           </div>
-          <button className="icon-btn close-btn" onClick={toggleSidebar}>
-            <X size={20} />
+
+          <button className="new-chat-btn" onClick={createNewChat}>
+            <Plus size={20} />
+            <span>New Chat</span>
           </button>
-        </div>
 
-        <button className="new-chat-btn" onClick={createNewChat}>
-          <Plus size={20} />
-          <span>New Chat</span>
-        </button>
-
-        <div className="chat-history">
-          <p className="history-label">Today</p>
-          <div className="history-list">
-            {chats.map((chat) => (
-              <div 
-                key={chat.id} 
-                className={`history-item ${activeChatId === chat.id ? 'active' : ''}`}
-                onClick={() => setActiveChat(chat.id)}
-              >
-                <MessageSquare size={18} className="item-icon" />
-                
-                {editingId === chat.id ? (
-                  <div className="edit-input-wrapper">
-                    <input 
-                      autoFocus
-                      className="edit-chat-input"
+          <div className="chats-container">
+            <div className="section-title">TODAY</div>
+            <div className="chat-list">
+              {chats.map((chat) => (
+                <div 
+                  key={chat.id} 
+                  className={`chat-item ${activeChatId === chat.id ? 'active' : ''}`}
+                  onClick={() => setActiveChat(chat.id)}
+                >
+                  <MessageSquare size={18} className="chat-icon" />
+                  
+                  {editingId === chat.id ? (
+                    <input
+                      className="rename-input"
                       value={editValue}
                       onChange={(e) => setEditValue(e.target.value)}
+                      onBlur={() => handleRename(chat.id)}
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') handleRename(chat.id);
                         if (e.key === 'Escape') setEditingId(null);
                       }}
+                      autoFocus
                       onClick={(e) => e.stopPropagation()}
                     />
-                    <div className="edit-actions">
-                      <button className="confirm-btn" onClick={(e) => { e.stopPropagation(); handleRename(chat.id); }}>
-                        <Check size={14} />
-                      </button>
-                      <button className="cancel-btn" onClick={(e) => { e.stopPropagation(); setEditingId(null); }}>
-                        <X size={14} />
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <>
-                    <span className="item-title">{chat.title}</span>
-                    <div className="item-actions">
-                      <button 
-                        className="action-btn" 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setEditingId(chat.id);
-                          setEditValue(chat.title);
-                        }}
-                      >
-                        <Edit3 size={16} />
-                      </button>
-                      <button 
-                        className="action-btn"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setModal('delete-chat', chat);
-                        }}
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  </>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
+                  ) : (
+                    <span className="chat-title">{chat.title}</span>
+                  )}
 
-        <div className="sidebar-footer">
-          <div className="profile-container" ref={profileMenuRef}>
+                  <div className="chat-actions">
+                    <button 
+                      className="action-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditingId(chat.id);
+                        setEditValue(chat.title);
+                      }}
+                    >
+                      <Edit3 size={14} />
+                    </button>
+                    <button 
+                      className="action-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setModal('delete-chat', { id: chat.id, title: chat.title });
+                      }}
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="sidebar-footer" ref={profileMenuRef}>
             <button 
-              className="profile-btn"
+              className={`user-profile ${profileMenuOpen ? 'active' : ''}`}
               onClick={() => setProfileMenuOpen(!profileMenuOpen)}
             >
               <div className="user-avatar">U</div>
               <div className="user-info">
-                <span className="username">User</span>
+                <span className="user-name">User</span>
                 <span className="user-email">user@daivai.com</span>
               </div>
               <MoreHorizontal size={18} className="more-icon" />
             </button>
 
-            {profileMenuOpen && (
-              <div className="profile-menu glass">
-                <button className="menu-item">
-                  <User size={18} />
-                  <span>My Account</span>
-                </button>
-                <button className="menu-item upgrade">
-                  <Sparkles size={18} />
-                  <span>Upgrade Plan</span>
-                </button>
-                <button className="menu-item">
-                  <Settings size={18} />
-                  <span>Settings</span>
-                </button>
-                <button className="menu-item">
-                  <HelpCircle size={18} />
-                  <span>Help & Support</span>
-                </button>
-                <div className="menu-divider"></div>
-                <button className="menu-item logout">
-                  <LogOut size={18} />
-                  <span>Log Out</span>
-                </button>
-              </div>
-            )}
+            <AnimatePresence>
+              {profileMenuOpen && (
+                <motion.div 
+                  className="profile-popup glass"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                >
+                  <button className="popup-item">
+                    <Sparkles size={18} />
+                    <span>My Account</span>
+                  </button>
+                  <button className="popup-item">
+                    <Settings size={18} />
+                    <span>Settings</span>
+                  </button>
+                  <div className="popup-divider" />
+                  <button className="popup-item logout">
+                    <LogOut size={18} />
+                    <span>Log out</span>
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
-        </div>
-      </div>
+        </motion.aside>
+      )}
 
       <style>{`
         .sidebar {
-          width: 280px;
-          background-color: var(--sidebar-bg);
+          width: 260px;
           height: 100vh;
+          background-color: var(--sidebar-bg);
+          border-right: 1px solid var(--border-color);
           display: flex;
           flex-direction: column;
-          border-right: 1px solid var(--border-color);
-          transition: transform 0.3s ease, margin-left 0.3s ease;
-          position: relative;
-          z-index: 50;
-        }
-
-        .sidebar.closed {
-          margin-left: -280px;
+          position: fixed;
+          top: 0;
+          left: 0;
+          z-index: 100;
         }
 
         .sidebar-header {
@@ -182,14 +175,27 @@ const Sidebar: React.FC = () => {
           justify-content: space-between;
         }
 
+        .logo-group {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+
         .brand-name {
           font-size: 20px;
           font-weight: 700;
+        }
+
+        .brand-accent-green {
           color: var(--primary-color);
         }
 
-        .brand-accent {
+        .brand-accent-black {
           color: var(--text-primary);
+        }
+
+        .close-btn {
+          color: var(--text-secondary);
         }
 
         .new-chat-btn {
@@ -201,128 +207,121 @@ const Sidebar: React.FC = () => {
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 12px;
+          gap: 8px;
           font-weight: 600;
-          font-size: 15px;
-          transition: background-color 0.2s;
+          box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);
         }
 
         .new-chat-btn:hover {
           background-color: #059669;
+          transform: translateY(-1px);
         }
 
-        .chat-history {
+        .chats-container {
           flex: 1;
           overflow-y: auto;
           padding: 0 12px;
         }
 
-        .history-label {
-          font-size: 12px;
-          font-weight: 600;
+        .section-title {
+          font-size: 11px;
+          font-weight: 700;
           color: var(--text-secondary);
           margin: 20px 8px 8px;
-          text-transform: uppercase;
           letter-spacing: 0.05em;
         }
 
-        .history-item {
+        .chat-list {
           display: flex;
-          align-items: center;
-          gap: 12px;
-          padding: 10px 12px;
-          border-radius: 10px;
-          cursor: pointer;
-          color: var(--text-primary);
-          transition: background-color 0.2s;
-          margin-bottom: 4px;
-          position: relative;
-        }
-
-        .history-item:hover {
-          background-color: var(--hover-bg);
-        }
-
-        .history-item.active {
-          background-color: var(--hover-bg);
-          font-weight: 500;
-        }
-
-        .item-icon {
-          color: var(--text-secondary);
-          flex-shrink: 0;
-        }
-
-        .item-title {
-          flex: 1;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          font-size: 14px;
-        }
-
-        .item-actions {
-          display: none;
+          flex-direction: column;
           gap: 4px;
         }
 
-        .history-item:hover .item-actions {
+        .chat-item {
           display: flex;
+          align-items: center;
+          padding: 10px 12px;
+          border-radius: 10px;
+          cursor: pointer;
+          gap: 12px;
+          position: relative;
+          transition: all 0.2s;
+        }
+
+        .chat-item:hover {
+          background-color: var(--hover-bg);
+        }
+
+        .chat-item.active {
+          background-color: #ecfdf5;
+          color: var(--primary-color);
+        }
+
+        .chat-icon {
+          flex-shrink: 0;
+          color: var(--text-secondary);
+        }
+
+        .chat-item.active .chat-icon {
+          color: var(--primary-color);
+        }
+
+        .chat-title {
+          flex: 1;
+          font-size: 14px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .rename-input {
+          flex: 1;
+          background: transparent;
+          border: none;
+          color: inherit;
+          font-size: 14px;
+          padding: 0;
+        }
+
+        .chat-actions {
+          display: flex;
+          gap: 2px;
+          opacity: 0;
+          transition: opacity 0.2s;
+        }
+
+        .chat-item:hover .chat-actions {
+          opacity: 1;
         }
 
         .action-btn {
           padding: 4px;
-          color: var(--text-secondary);
           border-radius: 4px;
+          color: var(--text-secondary);
         }
 
         .action-btn:hover {
-          background-color: var(--border-color);
+          background-color: rgba(0, 0, 0, 0.05);
           color: var(--text-primary);
-        }
-
-        .edit-input-wrapper {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          flex: 1;
-        }
-
-        .edit-chat-input {
-          flex: 1;
-          background: var(--bg-color);
-          border: 1px solid var(--primary-color);
-          border-radius: 4px;
-          padding: 2px 8px;
-          font-size: 14px;
-          width: 0;
-        }
-
-        .edit-actions {
-          display: flex;
-          gap: 4px;
         }
 
         .sidebar-footer {
           padding: 16px;
           border-top: 1px solid var(--border-color);
-        }
-
-        .profile-container {
           position: relative;
         }
 
-        .profile-btn {
+        .user-profile {
           width: 100%;
           display: flex;
           align-items: center;
           gap: 12px;
-          padding: 10px;
+          padding: 8px;
           border-radius: 12px;
           transition: background-color 0.2s;
         }
 
-        .profile-btn:hover {
+        .user-profile:hover, .user-profile.active {
           background-color: var(--hover-bg);
         }
 
@@ -331,12 +330,12 @@ const Sidebar: React.FC = () => {
           height: 32px;
           background-color: var(--primary-color);
           color: white;
-          border-radius: 8px;
+          border-radius: 50%;
           display: flex;
           align-items: center;
           justify-content: center;
-          font-weight: 600;
-          font-size: 14px;
+          font-weight: 700;
+          flex-shrink: 0;
         }
 
         .user-info {
@@ -344,17 +343,17 @@ const Sidebar: React.FC = () => {
           display: flex;
           flex-direction: column;
           align-items: flex-start;
-          overflow: hidden;
+          min-width: 0;
         }
 
-        .username {
+        .user-name {
           font-size: 14px;
           font-weight: 600;
           color: var(--text-primary);
         }
 
         .user-email {
-          font-size: 12px;
+          font-size: 11px;
           color: var(--text-secondary);
           white-space: nowrap;
           overflow: hidden;
@@ -366,55 +365,46 @@ const Sidebar: React.FC = () => {
           color: var(--text-secondary);
         }
 
-        .profile-menu {
+        .profile-popup {
           position: absolute;
-          bottom: calc(100% + 12px);
-          left: 0;
-          right: 0;
+          bottom: 70px;
+          left: 16px;
+          right: 16px;
+          background-color: white;
           border: 1px solid var(--border-color);
           border-radius: 12px;
           padding: 8px;
-          box-shadow: var(--shadow-md);
-          display: flex;
-          flex-direction: column;
-          gap: 4px;
+          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+          z-index: 200;
         }
 
-        .menu-item {
+        .popup-item {
+          width: 100%;
           display: flex;
           align-items: center;
-          gap: 12px;
-          padding: 10px 12px;
+          gap: 10px;
+          padding: 10px;
           border-radius: 8px;
           font-size: 14px;
           color: var(--text-primary);
           transition: background-color 0.2s;
         }
 
-        .menu-item:hover {
+        .popup-item:hover {
           background-color: var(--hover-bg);
         }
 
-        .menu-item.upgrade {
-          color: var(--primary-color);
-          font-weight: 500;
-        }
-
-        .menu-divider {
-          height: 1px;
-          background-color: var(--border-color);
-          margin: 4px 8px;
-        }
-
-        .menu-item.logout {
+        .popup-item.logout {
           color: #ef4444;
         }
 
-        .menu-item.logout:hover {
-          background-color: #fef2f2;
+        .popup-divider {
+          height: 1px;
+          background-color: var(--border-color);
+          margin: 4px 0;
         }
       `}</style>
-    </>
+    </AnimatePresence>
   );
 };
 
