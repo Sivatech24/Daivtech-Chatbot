@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Plus, MessageSquare, Edit3, Trash2, X, MoreHorizontal, Sparkles, Settings, LogOut } from 'lucide-react';
+import { Plus, MessageSquare, Edit3, Trash2, X, MoreHorizontal, Sparkles, Settings, LogOut, User, HelpCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useChatStore } from '../store/useChatStore';
 
@@ -135,12 +135,20 @@ const Sidebar: React.FC = () => {
                   exit={{ opacity: 0, y: 10 }}
                 >
                   <button className="popup-item">
-                    <Sparkles size={18} />
+                    <User size={18} />
                     <span>My Account</span>
+                  </button>
+                  <button className="popup-item highlight-green">
+                    <Sparkles size={18} />
+                    <span>Upgrade Plan</span>
                   </button>
                   <button className="popup-item">
                     <Settings size={18} />
                     <span>Settings</span>
+                  </button>
+                  <button className="popup-item">
+                    <HelpCircle size={18} />
+                    <span>Help & Support</span>
                   </button>
                   <div className="popup-divider" />
                   <button className="popup-item logout">
@@ -394,8 +402,13 @@ const Sidebar: React.FC = () => {
           background-color: var(--hover-bg);
         }
 
+        .popup-item.highlight-green {
+          color: var(--primary-color);
+        }
+
         .popup-item.logout {
           color: #ef4444;
+          margin-top: 4px;
         }
 
         .popup-divider {

@@ -4,9 +4,9 @@ import { useChatStore } from '../store/useChatStore';
 
 const models = [
   { id: 'Neural Nexus', name: 'Neural Nexus', version: 'Quantum Core v3.8', icon: Zap, color: '#10b981' },
-  { id: 'Cerebral Prime', name: 'Cerebral Prime', version: 'Advanced Reasoning v2.1', icon: Brain, color: '#6366f1' },
-  { id: 'Synapse Ultra', name: 'Synapse Ultra', version: 'Creative Engine v4.0', icon: Sparkles, color: '#f59e0b' },
-  { id: 'Logic Core', name: 'Logic Core', version: 'Fast Response v1.5', icon: Cpu, color: '#3b82f6' },
+  { id: 'Cerebral Prime', name: 'Cerebral Prime', version: 'Advanced Reasoning v2.1', icon: Brain, color: '#10b981' },
+  { id: 'Synapse Ultra', name: 'Synapse Ultra', version: 'Creative Engine v4.0', icon: Sparkles, color: '#10b981' },
+  { id: 'Logic Core', name: 'Logic Core', version: 'Fast Response v1.5', icon: Cpu, color: '#10b981' },
 ];
 
 const ModelSelector: React.FC = () => {
