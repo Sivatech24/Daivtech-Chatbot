@@ -35,44 +35,47 @@ Here are some things I can help with:
   return (
     <div className="chat-input-container">
       <div className="chat-input-wrapper glass">
-        <button className="input-icon-btn">
-          <Paperclip size={20} />
-        </button>
-        
-        <textarea
-          ref={textareaRef}
-          className="chat-textarea"
-          placeholder={`Message ${currentModel}...`}
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-              e.preventDefault();
-              handleSend();
-            }
-          }}
-          rows={1}
-          disabled={isTyping}
-        />
-
-        <div className="input-right-actions">
+        <div className="input-main-row">
           <button className="input-icon-btn">
-            <Mic size={20} />
+            <Paperclip size={20} />
           </button>
-          <button 
-            className={`send-btn ${input.trim() && !isTyping ? 'active' : ''}`}
-            onClick={handleSend}
-            disabled={!input.trim() || isTyping}
-          >
-            <Send size={18} />
-          </button>
+          
+          <textarea
+            ref={textareaRef}
+            className="chat-textarea"
+            placeholder={`Message ${currentModel}...`}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSend();
+              }
+            }}
+            rows={1}
+            disabled={isTyping}
+          />
+
+          <div className="input-right-actions">
+            <button className="input-icon-btn">
+              <Mic size={20} />
+            </button>
+            <button 
+              className={`send-btn ${input.trim() && !isTyping ? 'active' : ''}`}
+              onClick={handleSend}
+              disabled={!input.trim() || isTyping}
+            >
+              <Send size={18} />
+            </button>
+          </div>
         </div>
-      </div>
-      <div className="input-footer">
+
         <div className="prompt-info">
           <span className="disclaimer">Press Enter to send, Shift+Enter for new line</span>
           <span className="disclaimer">{input.length} / 4000</span>
         </div>
+      </div>
+      <div className="input-footer">
         <p className="disclaimer footer-note">
           AI can make mistakes. Consider checking important information.
         </p>
@@ -92,13 +95,20 @@ Here are some things I can help with:
 
         .chat-input-wrapper {
           display: flex;
-          align-items: flex-end;
-          gap: 12px;
+          flex-direction: column;
+          gap: 8px;
           padding: 12px 16px;
           border: 1px solid var(--border-color);
           border-radius: 20px;
           background-color: var(--sidebar-bg);
           transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .input-main-row {
+          display: flex;
+          align-items: flex-end;
+          gap: 12px;
+          width: 100%;
         }
 
         .chat-input-wrapper:focus-within {
@@ -158,10 +168,7 @@ Here are some things I can help with:
         }
 
         .input-footer {
-          margin-top: 12px;
-          display: flex;
-          flex-direction: column;
-          gap: 6px;
+          margin-top: 8px;
         }
 
         .prompt-info {
@@ -169,11 +176,11 @@ Here are some things I can help with:
           justify-content: space-between;
           align-items: center;
           padding: 0 4px;
+          margin-top: 4px;
         }
 
         .footer-note {
           text-align: center;
-          margin-top: 4px;
         }
 
         .disclaimer {

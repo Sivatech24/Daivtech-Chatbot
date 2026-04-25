@@ -257,10 +257,10 @@ const Sidebar: React.FC = () => {
         .chat-item-box {
           display: flex;
           flex-direction: column;
-          padding: 12px;
-          border-radius: 12px;
+          padding: 8px 10px;
+          border-radius: 10px;
           cursor: pointer;
-          gap: 8px;
+          gap: 4px;
           border: 1px solid transparent;
           transition: all 0.2s;
           background-color: transparent;
@@ -294,7 +294,7 @@ const Sidebar: React.FC = () => {
 
         .chat-title {
           flex: 1;
-          font-size: 14px;
+          font-size: 13px;
           font-weight: 500;
           white-space: nowrap;
           overflow: hidden;
@@ -310,8 +310,8 @@ const Sidebar: React.FC = () => {
         }
 
         .chat-date {
-          font-size: 12px;
-          color: var(--text-secondary);
+          font-size: 11px;
+          color: #9ca3af;
         }
 
         .action-btn-small {
@@ -407,6 +407,7 @@ const Sidebar: React.FC = () => {
           font-size: 14px;
           font-weight: 600;
           color: var(--text-primary);
+          line-height: 1.2;
         }
 
         .user-email {
